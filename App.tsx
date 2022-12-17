@@ -12,9 +12,9 @@ import Button from "./components/Button";
 import ImageViewer from "./components/ImageViewer";
 import IconButton from "./components/IconButton";
 import CircleButton from "./components/CircleButton";
-import EmojiPicker from "./components/EmojiPicker";
+import EmojiPicker from "./components/EmoijLists/EmojiPickerContainer";
 import EmojiList from "./components/EmoijLists/EmojiListFaces";
-import EmojiSticker from "./components/EmojiSticker";
+import EmojiSticker from "./components/EmoijLists/EmojiSticker";
 
 import { ASSETS } from "./imagesPath";
 
