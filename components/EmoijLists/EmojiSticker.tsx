@@ -1,22 +1,29 @@
-import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const EmojiSticker = ({ imageSize, stickerSource }: { imageSize: number; stickerSource: string }) => {
+  const { width, height } = useWindowDimensions();
+
   // Shared values
   const offset = useSharedValue({ x: 0, y: 0 });
   const start = useSharedValue({ x: 0, y: 0 });
   const DRAG_SPEED_DECELERATOR = 2;
 
   const MIN_SCALE = 3;
-  const HIT_SLOPE = 200;
+  const HIT_SLOPE = 100;
   const scale = useSharedValue(MIN_SCALE);
   const savedScale = useSharedValue(MIN_SCALE);
 
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
+
+  const logPos = (pos: { x: number; y: number }) => {
+    console.log(`Position : ${pos.x}, ${pos.y}`);
+  };
 
   // Gestures
   const dragGesture = Gesture.Pan()
@@ -27,18 +34,19 @@ const EmojiSticker = ({ imageSize, stickerSource }: { imageSize: number; sticker
         y: (e.translationY + start.value.y) / DRAG_SPEED_DECELERATOR,
       };
     })
-    .onEnd(() => {
+    .onEnd((e) => {
       start.value = {
         x: offset.value.x,
         y: offset.value.y,
       };
+      runOnJS(logPos)({ x: e.x, y: e.y });
     });
 
   const rotateGesture = Gesture.Rotation()
     .onUpdate((event) => {
       rotation.value = savedRotation.value + event.rotation * 2;
     })
-    .onEnd(() => {
+    .onEnd((e) => {
       savedRotation.value = rotation.value;
     });
 
@@ -92,7 +100,8 @@ const EmojiSticker = ({ imageSize, stickerSource }: { imageSize: number; sticker
           hitSlop={{ bottom: HIT_SLOPE, top: HIT_SLOPE, left: HIT_SLOPE, right: HIT_SLOPE }}
           style={[
             {
-              top: -350,
+              top: -height / 4,
+              right: -width / 2,
               zIndex: 100,
             },
           ]}>

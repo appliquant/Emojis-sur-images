@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 2,
     marginTop: 50,
+    overflow: "hidden",
   },
   footerContainer: {
     flex: 1,
