@@ -157,13 +157,45 @@ export default function App() {
         {/* Liste d'emojis */}
         <EmojiPicker bottomSheetModalRef={bottomSheetModalRef} onClose={OnModalClose}>
           <View style={EmojiPickerStyles.container}>
+            {/* Titre */}
             <Text style={EmojiPickerStyles.title}>Emoji List</Text>
-            <EmojiList
-              onSelect={(item) => {
-                setPickedEmoji(item);
-              }}
-              onCloseModal={OnModalClose}
-            />
+
+            {/* Contenu */}
+            {/* Liste 'humans faces' */}
+            <View>
+              <Text style={EmojiPickerStyles.subtitle}>Humans faces</Text>
+              <EmojiList
+                emojisType={ASSETS.emojis.faces}
+                onSelect={(item) => {
+                  setPickedEmoji(item);
+                }}
+                onCloseModal={OnModalClose}
+              />
+            </View>
+
+            {/* Liste 'animals' */}
+            <View>
+              <Text style={EmojiPickerStyles.subtitle}>Animals</Text>
+              <EmojiList
+                emojisType={ASSETS.emojis.animals}
+                onSelect={(item) => {
+                  setPickedEmoji(item);
+                }}
+                onCloseModal={OnModalClose}
+              />
+            </View>
+
+            {/* Liste 'Other emojis' */}
+            <View>
+              <Text style={EmojiPickerStyles.subtitle}>Other emojis</Text>
+              <EmojiList
+                emojisType={ASSETS.emojis.other}
+                onSelect={(item) => {
+                  setPickedEmoji(item);
+                }}
+                onCloseModal={OnModalClose}
+              />
+            </View>
           </View>
         </EmojiPicker>
       </View>
@@ -197,12 +229,18 @@ const EmojiPickerStyles = StyleSheet.create({
     padding: 24,
     flex: 1,
     flexDirection: "column",
-    justifyContent: "flex-start",
+    // justifyContent: "space-around",
   },
 
   title: {
     fontSize: 40,
     fontWeight: "bold",
+    color: "white",
+  },
+
+  subtitle: {
+    marginVertical: 10,
+    fontSize: 22,
     color: "white",
   },
 });

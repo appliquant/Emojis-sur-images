@@ -3,20 +3,30 @@ import React, { useEffect, useState } from "react";
 
 import { ASSETS } from "../../imagesPath";
 
-const EmojiList = ({ onSelect, onCloseModal }: { onSelect: (emoji: string) => void; onCloseModal: () => void }) => {
+const EmojiList = ({
+  onSelect,
+  onCloseModal,
+  emojisType,
+}: {
+  onSelect: (emoji: string) => void;
+  onCloseModal: () => void;
+  emojisType: {};
+}) => {
   return (
     <FlatList
       horizontal
       showsHorizontalScrollIndicator={Platform.OS === "web" ? true : false}
-      data={Object.values(ASSETS.emojis)}
+      data={Object.values(emojisType)}
       contentContainerStyle={styles.listContainer}
       renderItem={({ item, index }) => {
         return (
           <Pressable
             onPress={() => {
-              onSelect(Object.values(ASSETS.emojis)[index]);
+              // @ts-ignore
+              onSelect(Object.values(emojisType)[index]);
               onCloseModal();
             }}>
+            {/* @ts-ignore */}
             <Image key={index} source={item} style={styles.image} />
           </Pressable>
         );
@@ -29,12 +39,12 @@ export default EmojiList;
 
 const styles = StyleSheet.create({
   listContainer: {
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
+    // borderTopRightRadius: 10,
+    // borderTopLeftRadius: 10,
     // paddingHorizontal: 20,
-    marginV: 10,
-    flexDirection: "row",
-    alignItems: "flex-start",
+    // marginVertical: 10,
+    // flexDirection: "row",
+    // alignItems: "flex-start",
     justifyContent: "space-between",
   },
   image: {
