@@ -1,18 +1,19 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useRef, useEffect } from "react";
 import * as MediaLibrary from "expo-media-library";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as ExpoLinking from "expo-linking";
+import BottomSheet, { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import Button from "./components/Button";
 import ImageViewer from "./components/ImageViewer";
 import IconButton from "./components/IconButton";
 import CircleButton from "./components/CircleButton";
 import EmojiPicker from "./components/EmojiPicker";
-import EmojiList from "./components/EmojiList";
+import EmojiList from "./components/EmoijLists/EmojiListFaces";
 import EmojiSticker from "./components/EmojiSticker";
 
 import { ASSETS } from "./imagesPath";
@@ -20,11 +21,11 @@ import { ASSETS } from "./imagesPath";
 export default function App() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState<string | null>(null);
   const [imgLibPermissionResponse, imgLibrequestPermission] = MediaLibrary.usePermissions();
 
   const imageRef = useRef(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const AskForLibPermission = async () => {
     return new Promise((resolve, reject) => {
@@ -70,8 +71,9 @@ export default function App() {
     setPickedEmoji(null);
   };
 
+  // Ouvir la modal de emojis
   const OnAddSticker = () => {
-    setIsModalVisible(true);
+    bottomSheetModalRef?.current?.present();
   };
 
   const OnSaveImageAsync = async () => {
@@ -103,72 +105,76 @@ export default function App() {
   };
 
   const OnModalClose = () => {
-    setIsModalVisible(false);
+    bottomSheetModalRef.current?.close();
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#25292e" }}>
+      <View style={styles.container}>
+        <StatusBar style="light" />
 
-      {/* Image choisie */}
-      <View style={styles.imageContainer}>
-        <ViewShot ref={imageRef}>
-          <ImageViewer selectedImage={selectedImage} placeholderImage={ASSETS.images.PLACEHOLDER_IMAGE} />
-          {/* Selected emoji */}
-          {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
-        </ViewShot>
-      </View>
+        {/* Image choisie */}
+        <View style={styles.imageContainer}>
+          <ViewShot ref={imageRef}>
+            <ImageViewer selectedImage={selectedImage} placeholderImage={ASSETS.images.PLACEHOLDER_IMAGE} />
+            {/* Selected emoji */}
+            {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+          </ViewShot>
+        </View>
 
-      {/* Groupe de boutons en bas */}
-      <View style={styles.footerContainer}>
-        {/* Choose a photo button */}
-        <Button
-          onPress={(e) => {
-            PickImageAsync();
-          }}
-          theme="primary"
-          label="Choose a photo"
-        />
+        {/* Groupe de boutons en bas */}
+        <View style={styles.footerContainer}>
+          {/* Choose a photo button */}
+          <Button
+            onPress={(e) => {
+              PickImageAsync();
+            }}
+            theme="primary"
+            label="Choose a photo"
+          />
 
-        {/* Use this photo button */}
-        <Button
-          onPress={() => {
-            setShowAppOptions(true);
-          }}
-          theme="other"
-          label="Use this photo"
-        />
+          {/* Use this photo button */}
+          <Button
+            onPress={() => {
+              setShowAppOptions(true);
+            }}
+            theme="other"
+            label="Use this photo"
+          />
 
-        {/* Bottoms buttons */}
-        {showAppOptions && (
-          <View style={styles.optionsContainer}>
-            <View style={styles.optionsRow}>
-              <IconButton icon="refresh" label="Reset" onPress={OnReset} />
-              <CircleButton onPress={OnAddSticker} />
-              <IconButton icon="save-alt" label="Save" onPress={OnSaveImageAsync} />
-
-              {/* Emojis list */}
-              <EmojiPicker isVisible={isModalVisible} onClose={OnModalClose}>
-                <EmojiList
-                  onSelect={(item) => {
-                    setPickedEmoji(item);
-                  }}
-                  onCloseModal={() => {
-                    OnModalClose();
-                  }}
-                />
-              </EmojiPicker>
+          {/* Bottoms buttons */}
+          {showAppOptions && (
+            <View>
+              <View style={styles.optionsRow}>
+                <IconButton icon="refresh" label="Reset" onPress={OnReset} />
+                <CircleButton onPress={OnAddSticker} />
+                <IconButton icon="save-alt" label="Save" onPress={OnSaveImageAsync} />
+              </View>
             </View>
+          )}
+        </View>
+
+        {/* Liste d'emojis */}
+        <EmojiPicker bottomSheetModalRef={bottomSheetModalRef} onClose={OnModalClose}>
+          <View style={EmojiPickerStyles.container}>
+            <Text style={EmojiPickerStyles.title}>Emoji List</Text>
+            <EmojiList
+              onSelect={(item) => {
+                setPickedEmoji(item);
+              }}
+              onCloseModal={OnModalClose}
+            />
           </View>
-        )}
+        </EmojiPicker>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    height: "100%",
     alignItems: "center",
     backgroundColor: "#25292e",
   },
@@ -180,11 +186,23 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  optionsContainer: {
-    // position: "absolute",
-    // bottom: 10,
-  },
   optionsRow: {
     flexDirection: "row",
+  },
+});
+
+const EmojiPickerStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "#1b1b1e",
+    padding: 24,
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+  },
+
+  title: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "white",
   },
 });

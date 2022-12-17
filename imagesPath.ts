@@ -3,6 +3,9 @@ export const ASSETS = {
     PLACEHOLDER_IMAGE: require("./assets/background-image.png"),
   },
   emojis: {
+    faces : {
+
+    },
     "100": require("./assets/emojis/100.png"),
     drooling_face: require("./assets/emojis/drooling_face.png"),
     grinning: require("./assets/emojis/grinning.png"),
