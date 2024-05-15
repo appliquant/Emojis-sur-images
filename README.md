@@ -1,6 +1,6 @@
 https://user-images.githubusercontent.com/29934021/208224788-397ff941-1532-464d-a15b-74d7af5ffaeb.mp4
 
-[*en*](#Emojis)
+[*english*](#Emojis)
 
 # Emojis sur images
 
